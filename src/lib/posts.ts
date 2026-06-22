@@ -100,11 +100,13 @@ export function getAllPosts(section?: string): Post[] {
     allPosts.push(...posts);
   }
 
-  return allPosts.sort(
-    (a, b) =>
-      new Date(b.frontmatter.date).getTime() -
-      new Date(a.frontmatter.date).getTime()
-  );
+  return allPosts
+    .filter((p) => p.frontmatter.date && !isNaN(Date.parse(p.frontmatter.date)))
+    .sort(
+      (a, b) =>
+        new Date(b.frontmatter.date).getTime() -
+        new Date(a.frontmatter.date).getTime()
+    );
 }
 
 export interface PostWithSource extends Post {
