@@ -8,9 +8,9 @@ type Cell = Player | null;
 type Board = Cell[];
 
 const WINNING_LINES = [
-  [0, 1, 2], [3, 4, 5], [6, 7, 8], // rows
-  [0, 3, 6], [1, 4, 7], [2, 5, 8], // cols
-  [0, 4, 8], [2, 4, 6],             // diagonals
+  [0, 1, 2], [3, 4, 5], [6, 7, 8],
+  [0, 3, 6], [1, 4, 7], [2, 5, 8],
+  [0, 4, 8], [2, 4, 6],
 ];
 
 function checkWinner(board: Board): Player | null {
@@ -26,34 +26,29 @@ function isFull(board: Board): boolean {
   return board.every((cell) => cell !== null);
 }
 
-// AI: pick best move — win if possible, block player win, else center/corner/random
+// Dumbed-down AI: sometimes blocks, mostly random, but always takes a win
 function aiMove(board: Board): number {
   const empty = board
     .map((cell, i) => (cell === null ? i : -1))
     .filter((i) => i !== -1);
 
-  // Try to win
+  // Always take a winning move
   for (const i of empty) {
     const test = [...board];
     test[i] = "O";
     if (checkWinner(test) === "O") return i;
   }
 
-  // Block player win
-  for (const i of empty) {
-    const test = [...board];
-    test[i] = "X";
-    if (checkWinner(test) === "X") return i;
+  // 30% chance to block player's winning move
+  if (Math.random() < 0.3) {
+    for (const i of empty) {
+      const test = [...board];
+      test[i] = "X";
+      if (checkWinner(test) === "X") return i;
+    }
   }
 
-  // Take center
-  if (board[4] === null) return 4;
-
-  // Take corners
-  const corners = [0, 2, 6, 8].filter((i) => board[i] === null);
-  if (corners.length > 0) return corners[Math.floor(Math.random() * corners.length)];
-
-  // Random
+  // Random move
   return empty[Math.floor(Math.random() * empty.length)];
 }
 
@@ -73,7 +68,6 @@ export default function TicTacToe() {
 
       const winner = checkWinner(newBoard);
       if (winner === "X") {
-        // Find the winning line
         for (const line of WINNING_LINES) {
           if (
             newBoard[line[0]] === "X" &&
@@ -126,7 +120,7 @@ export default function TicTacToe() {
   return (
     <div className="flex flex-col items-center gap-8">
       {/* Board */}
-      <div className="grid grid-cols-3 gap-px bg-white/10 rounded-lg overflow-hidden backdrop-blur">
+      <div className="grid grid-cols-3 gap-px rounded-lg overflow-hidden ring-1 ring-zinc-200">
         {board.map((cell, i) => {
           const isWin = winningLine?.includes(i);
           return (
@@ -136,17 +130,17 @@ export default function TicTacToe() {
               disabled={state !== "playing" || cell !== null}
               className={`
                 w-20 h-20 flex items-center justify-center text-2xl font-light
-                bg-zinc-900 transition-colors duration-200
+                bg-white transition-colors duration-200
                 disabled:cursor-default
                 ${cell === null && state === "playing"
-                  ? "hover:bg-zinc-800 cursor-pointer"
+                  ? "hover:bg-zinc-50 cursor-pointer"
                   : ""
                 }
                 ${isWin
-                  ? "bg-emerald-900/50 text-emerald-400"
+                  ? "bg-emerald-50 text-emerald-600"
                   : cell === "X"
-                    ? "text-white"
-                    : "text-white/60"
+                    ? "text-zinc-800"
+                    : "text-zinc-300"
                 }
               `}
             >
@@ -159,15 +153,17 @@ export default function TicTacToe() {
       {/* Game status */}
       <div className="text-center space-y-4">
         {state === "playing" && (
-          <p className="text-sm text-white/40">井字棋 · 你执 X 先手 · 战胜 AI 即可进入</p>
+          <p className="text-sm text-zinc-400">
+            井字棋 · 你执 X 先手 · 战胜 AI 即可进入
+          </p>
         )}
 
         {state === "won" && (
           <div className="space-y-4 animate-fade-in">
-            <p className="text-emerald-400 text-lg font-medium">胜局</p>
+            <p className="text-emerald-600 text-lg font-medium">胜局</p>
             <Link
               href="/blog"
-              className="inline-flex items-center gap-2 rounded-full bg-white px-8 py-3 text-sm font-medium text-black hover:bg-white/90 transition-all duration-300 hover:scale-105"
+              className="inline-flex items-center gap-2 rounded-full bg-zinc-900 px-8 py-3 text-sm font-medium text-white hover:bg-zinc-800 transition-all duration-300 hover:scale-105"
             >
               进入
               <span className="text-lg leading-none">&rarr;</span>
@@ -177,12 +173,12 @@ export default function TicTacToe() {
 
         {state === "lost" && (
           <div className="space-y-4 animate-fade-in">
-            <p className="text-red-400/80 text-sm leading-relaxed">
+            <p className="text-zinc-500 text-sm leading-relaxed">
               建议修炼 IQ 值后进入
             </p>
             <button
               onClick={reset}
-              className="text-sm text-white/40 hover:text-white transition-colors underline underline-offset-4"
+              className="text-sm text-zinc-400 hover:text-zinc-600 transition-colors underline underline-offset-4"
             >
               再来一局
             </button>
@@ -191,10 +187,10 @@ export default function TicTacToe() {
 
         {state === "draw" && (
           <div className="space-y-4 animate-fade-in">
-            <p className="text-white/40 text-sm">平局</p>
+            <p className="text-zinc-400 text-sm">平局</p>
             <button
               onClick={reset}
-              className="text-sm text-white/40 hover:text-white transition-colors underline underline-offset-4"
+              className="text-sm text-zinc-400 hover:text-zinc-600 transition-colors underline underline-offset-4"
             >
               再来一局
             </button>
