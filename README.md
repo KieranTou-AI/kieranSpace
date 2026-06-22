@@ -36,6 +36,14 @@ npm run dev
 
 **后期**：图片数量增多后切换至 [Cloudflare R2](https://www.cloudflare.com/developer-platform/r2/)，零出站流量费，S3 兼容 API。届时仅需将图片路径改为 R2 公开 URL 即可，MDX 写法不变。
 
+## 部署
+
+通过 [Vercel](https://vercel.com/) 部署，使用 GitHub 账号登录后导入仓库即可，Vercel 自动识别 Next.js 项目，无需额外配置。
+
+线上地址：[kieran-space.vercel.app](https://kieran-space.vercel.app/)
+
+每次 push 到 `main` 分支，Vercel 自动触发重新部署。
+
 ## 发布流程
 
 1. 在 `content/` 目录下编写 `.mdx` 文章
