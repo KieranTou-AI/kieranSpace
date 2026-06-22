@@ -16,10 +16,7 @@ export default function MainLayout({
     <div className="min-h-screen bg-zinc-50">
       {/* Top navigation */}
       <header className="sticky top-0 z-50 border-b border-zinc-200 bg-white/80 backdrop-blur">
-        <nav className="mx-auto flex max-w-6xl items-center justify-between px-6 h-14">
-          <Link href="/ai" className="text-sm font-medium text-zinc-800">
-            kieranSpace
-          </Link>
+        <nav className="mx-auto flex max-w-6xl items-center justify-center px-6 h-14">
           <div className="flex gap-1">
             {NAV_ITEMS.map((item) => (
               <Link

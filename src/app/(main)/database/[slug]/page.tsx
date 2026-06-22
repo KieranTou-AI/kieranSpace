@@ -4,15 +4,12 @@ import { MDXContent } from "@/components/mdx";
 import Link from "next/link";
 import type { Metadata } from "next";
 
-const SECTION = "ai";
+const SECTION = "database";
 
-interface PageProps {
-  params: Promise<{ slug: string }>;
-}
+interface PageProps { params: Promise<{ slug: string }> }
 
 export async function generateStaticParams() {
-  const posts = getAllPosts(SECTION);
-  return posts.map((post) => ({ slug: post.slug }));
+  return getAllPosts(SECTION).map((p) => ({ slug: p.slug }));
 }
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
@@ -22,7 +19,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   return { title: post.frontmatter.title, description: post.frontmatter.description };
 }
 
-export default async function AiPost({ params }: PageProps) {
+export default async function Post({ params }: PageProps) {
   const { slug } = await params;
   const post = getPostBySlug(slug, SECTION);
   if (!post) notFound();
@@ -30,9 +27,7 @@ export default async function AiPost({ params }: PageProps) {
   return (
     <article className="mx-auto max-w-3xl px-6 py-16">
       <header className="mb-10">
-        <h1 className="mb-4 text-2xl font-medium text-zinc-800">
-          {post.frontmatter.title}
-        </h1>
+        <h1 className="mb-4 text-2xl font-medium text-zinc-800">{post.frontmatter.title}</h1>
         <div className="flex flex-wrap items-center gap-2 text-sm text-zinc-400">
           <time dateTime={post.frontmatter.date}>
             {new Date(post.frontmatter.date).toLocaleDateString("zh-CN", {
@@ -40,7 +35,7 @@ export default async function AiPost({ params }: PageProps) {
             })}
           </time>
           {post.frontmatter.category && (
-            <Link href={`/ai?category=${post.frontmatter.category}`}
+            <Link href={`/database?category=${post.frontmatter.category}`}
               className="text-zinc-500 hover:text-zinc-800 transition-colors">
               {getCategoryDisplayName(post.frontmatter.category)}
             </Link>

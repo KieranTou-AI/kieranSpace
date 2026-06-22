@@ -5,12 +5,11 @@ import Sidebar from "@/components/sidebar";
 import Pagination from "@/components/pagination";
 import type { Metadata } from "next";
 
-const SECTION = "ai";
+const SECTION = "database";
 const PER_PAGE = 5;
 
 export async function generateStaticParams() {
-  const cats = getCategories(SECTION);
-  return cats.map((c) => ({ category: c.key }));
+  return getCategories(SECTION).map((c) => ({ category: c.key }));
 }
 
 interface PageProps {
@@ -25,7 +24,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   return { title: `${name} — kieranSpace` };
 }
 
-export default async function AiCategoryPage({ params, searchParams }: PageProps) {
+export default async function Page({ params, searchParams }: PageProps) {
   const { category } = await params;
   const name = getCategoryDisplayName(category);
   if (name === category) notFound();
@@ -45,7 +44,7 @@ export default async function AiCategoryPage({ params, searchParams }: PageProps
           <div className="space-y-10">
             {posts.map((post) => (
               <article key={post.slug}>
-                <Link href={`/ai/${post.slug}`} className="group block">
+                <Link href={`/database/${post.slug}`} className="group block">
                   <h2 className="text-lg font-medium text-zinc-800 group-hover:text-zinc-600 transition-colors">
                     {post.frontmatter.title}
                   </h2>
@@ -67,7 +66,7 @@ export default async function AiCategoryPage({ params, searchParams }: PageProps
             ))}
           </div>
         )}
-        <Pagination currentPage={page} totalPages={totalPages} basePath={`/ai/category/${category}`} category={category} />
+        <Pagination currentPage={page} totalPages={totalPages} basePath={`/database/category/${category}`} category={category} />
       </main>
     </div>
   );

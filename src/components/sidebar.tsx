@@ -1,16 +1,19 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 
 const FILTERS = [
   { key: "", label: "全部" },
-  { key: "articles", label: "文章" },
+  { key: "articles", label: "随笔" },
   { key: "tools", label: "工具栏" },
 ];
 
-export default function Sidebar() {
-  const pathname = usePathname();
+interface SidebarProps {
+  section: string;
+}
+
+export default function Sidebar({ section }: SidebarProps) {
   const searchParams = useSearchParams();
   const currentCategory = searchParams.get("category") || "";
 
@@ -18,7 +21,7 @@ export default function Sidebar() {
     <aside className="w-44 shrink-0">
       <nav className="space-y-0.5 sticky top-20">
         {FILTERS.map((f) => {
-          const href = f.key ? `${pathname}?category=${f.key}` : pathname;
+          const href = f.key ? `/${section}?category=${f.key}` : `/${section}`;
           const isActive = currentCategory === f.key;
           return (
             <Link

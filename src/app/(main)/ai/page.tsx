@@ -1,14 +1,15 @@
-import { getPaginatedPosts, getCategoryDisplayName } from "@/lib/posts";
+import { getPaginatedPosts, getSectionDisplayName } from "@/lib/posts";
 import Link from "next/link";
 import Sidebar from "@/components/sidebar";
 import Pagination from "@/components/pagination";
 import type { Metadata } from "next";
 
-export const metadata: Metadata = {
-  title: "人工智能 — kieranSpace",
-};
-
+const SECTION = "ai";
 const PER_PAGE = 5;
+
+export const metadata: Metadata = {
+  title: `${getSectionDisplayName(SECTION)} — kieranSpace`,
+};
 
 interface PageProps {
   searchParams: Promise<{ page?: string; category?: string }>;
@@ -19,11 +20,11 @@ export default async function AiPage({ searchParams }: PageProps) {
   const page = Math.max(1, parseInt(params.page || "1") || 1);
   const category = params.category || undefined;
 
-  const { posts, totalPages } = getPaginatedPosts(page, PER_PAGE, category);
+  const { posts, totalPages } = getPaginatedPosts(SECTION, page, PER_PAGE, category);
 
   return (
     <div className="mx-auto flex max-w-6xl gap-10 px-6 py-12">
-      <Sidebar />
+      <Sidebar section={SECTION} />
 
       <main className="flex-1 min-w-0">
         {posts.length === 0 ? (
@@ -53,7 +54,7 @@ export default async function AiPage({ searchParams }: PageProps) {
                       href={`/ai?category=${post.frontmatter.category}`}
                       className="text-zinc-400 hover:text-zinc-600 transition-colors"
                     >
-                      {getCategoryDisplayName(post.frontmatter.category)}
+                      {post.frontmatter.category === "articles" ? "随笔" : "工具栏"}
                     </Link>
                   )}
                   {post.frontmatter.tags?.map((tag) => (
