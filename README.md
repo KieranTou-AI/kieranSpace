@@ -46,9 +46,20 @@ npm run dev
 
 ## 发布流程
 
-1. 在 `content/` 目录下编写 `.mdx` 文章
+1. 在 `content/` 对应分类子目录下编写 `.mdx` 文章
 2. `git add . && git commit && git push`
 3. Vercel 自动构建部署
+
+### 文章分类
+
+文章按子目录分类：
+
+| 目录 | 分类 |
+|------|------|
+| `content/articles/` | 文章 |
+| `content/tools/` | 工具栏 |
+
+新增分类需在 `src/lib/posts.ts` 的 `CATEGORY_MAP` 中添加映射。
 
 ## 文章规范
 

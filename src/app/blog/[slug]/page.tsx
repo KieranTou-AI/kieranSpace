@@ -1,5 +1,5 @@
 import { notFound } from "next/navigation";
-import { getPostBySlug, getAllPosts } from "@/lib/posts";
+import { getPostBySlug, getAllPosts, getCategoryDisplayName } from "@/lib/posts";
 import { MDXContent } from "@/components/mdx";
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
@@ -51,6 +51,14 @@ export default async function BlogPost({ params }: PageProps) {
               day: "numeric",
             })}
           </time>
+          {post.frontmatter.category && (
+            <Link
+              href={`/blog/category/${post.frontmatter.category}`}
+              className="text-primary hover:underline"
+            >
+              {getCategoryDisplayName(post.frontmatter.category)}
+            </Link>
+          )}
           {post.frontmatter.tags && (
             <div className="flex gap-1">
               {post.frontmatter.tags.map((tag) => (

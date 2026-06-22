@@ -1,4 +1,4 @@
-import { getAllPosts } from "@/lib/posts";
+import { getAllPosts, getAllCategories, getCategoryDisplayName } from "@/lib/posts";
 import Link from "next/link";
 import type { Metadata } from "next";
 
@@ -9,6 +9,7 @@ export const metadata: Metadata = {
 
 export default function BlogList() {
   const posts = getAllPosts();
+  const categories = getAllCategories();
 
   return (
     <div className="mx-auto max-w-3xl px-4 py-16">
@@ -23,6 +24,26 @@ export default function BlogList() {
         <p className="mt-2 text-muted-foreground">技术教程 & 知识分享</p>
       </header>
 
+      {categories.length > 0 && (
+        <nav className="flex gap-2 mb-8">
+          <Link
+            href="/blog"
+            className="rounded-md bg-muted px-3 py-1 text-sm font-medium transition-colors hover:bg-muted/80"
+          >
+            全部
+          </Link>
+          {categories.map((c) => (
+            <Link
+              key={c.key}
+              href={`/blog/category/${c.key}`}
+              className="rounded-md px-3 py-1 text-sm text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+            >
+              {c.displayName}
+            </Link>
+          ))}
+        </nav>
+      )}
+
       {posts.length === 0 ? (
         <p className="text-center text-muted-foreground py-20">还没有文章</p>
       ) : (
@@ -36,31 +57,39 @@ export default function BlogList() {
                 <p className="mt-1 text-muted-foreground">
                   {post.frontmatter.description}
                 </p>
-                <div className="mt-2 flex items-center gap-3 text-sm text-muted-foreground">
-                  <time dateTime={post.frontmatter.date}>
-                    {new Date(post.frontmatter.date).toLocaleDateString(
-                      "zh-CN",
-                      {
-                        year: "numeric",
-                        month: "long",
-                        day: "numeric",
-                      }
-                    )}
-                  </time>
-                  {post.frontmatter.tags && (
-                    <div className="flex gap-1">
-                      {post.frontmatter.tags.map((tag) => (
-                        <span
-                          key={tag}
-                          className="rounded bg-muted px-2 py-0.5 text-xs"
-                        >
-                          {tag}
-                        </span>
-                      ))}
-                    </div>
-                  )}
-                </div>
               </Link>
+              <div className="mt-2 flex items-center gap-3 text-sm text-muted-foreground">
+                <time dateTime={post.frontmatter.date}>
+                  {new Date(post.frontmatter.date).toLocaleDateString(
+                    "zh-CN",
+                    {
+                      year: "numeric",
+                      month: "long",
+                      day: "numeric",
+                    }
+                  )}
+                </time>
+                {post.frontmatter.category && (
+                  <Link
+                    href={`/blog/category/${post.frontmatter.category}`}
+                    className="text-primary hover:underline"
+                  >
+                    {getCategoryDisplayName(post.frontmatter.category)}
+                  </Link>
+                )}
+                {post.frontmatter.tags && (
+                  <div className="flex gap-1">
+                    {post.frontmatter.tags.map((tag) => (
+                      <span
+                        key={tag}
+                        className="rounded bg-muted px-2 py-0.5 text-xs"
+                      >
+                        {tag}
+                      </span>
+                    ))}
+                  </div>
+                )}
+              </div>
             </article>
           ))}
         </div>
