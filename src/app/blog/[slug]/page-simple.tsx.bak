@@ -1,0 +1,16 @@
+// Test: create a minimal page component that just shows the slug
+EOF
+
+# Actually, let me just test directly with a simpler approach
+# Make a test that isolates the MDX rendering issue
+node -e "
+const matter = require('gray-matter');
+const fs = require('fs');
+
+// Read the actual Chinese-named file
+const fileContents = fs.readFileSync('content/适合中国宝宝的低成本VibeCoding指南.mdx', 'utf8');
+const { data, content } = matter(fileContents);
+console.log('Frontmatter:', JSON.stringify(data));
+console.log('Content length:', content.length);
+console.log('Content:', content);
+" 2>&1

@@ -9,6 +9,7 @@ export interface PostFrontmatter {
   description: string;
   date: string;
   tags: string[];
+  slug?: string;
 }
 
 export interface Post {
@@ -25,13 +26,13 @@ export function getAllPosts(): Post[] {
   const posts = filenames
     .filter((filename) => filename.endsWith(".mdx"))
     .map((filename) => {
-      const slug = filename.replace(/\.mdx$/, "");
+      const fileSlug = filename.replace(/\.mdx$/, "");
       const fullPath = path.join(postsDirectory, filename);
       const fileContents = fs.readFileSync(fullPath, "utf8");
       const { data } = matter(fileContents);
 
       return {
-        slug,
+        slug: data.slug || fileSlug,
         frontmatter: data as PostFrontmatter,
       };
     })
@@ -49,10 +50,26 @@ export interface PostWithSource extends Post {
 }
 
 export function getPostBySlug(slug: string): PostWithSource | null {
-  const fullPath = path.join(postsDirectory, `${slug}.mdx`);
+  // First try direct filename match
+  let fullPath = path.join(postsDirectory, `${slug}.mdx`);
 
+  // If not found, search by frontmatter slug
   if (!fs.existsSync(fullPath)) {
-    return null;
+    const filenames = fs.readdirSync(postsDirectory);
+    const match = filenames.find((filename) => {
+      if (!filename.endsWith(".mdx")) return false;
+      const fileContents = fs.readFileSync(
+        path.join(postsDirectory, filename),
+        "utf8"
+      );
+      const { data } = matter(fileContents);
+      return data.slug === slug;
+    });
+    if (match) {
+      fullPath = path.join(postsDirectory, match);
+    } else {
+      return null;
+    }
   }
 
   const fileContents = fs.readFileSync(fullPath, "utf8");

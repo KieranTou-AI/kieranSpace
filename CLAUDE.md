@@ -46,9 +46,10 @@ kieranSpace/
 
 ### MDX Blog Posts
 
-- Place in `content/` with descriptive filenames: `react-hooks-guide.mdx`
-- Frontmatter must include: `title`, `description`, `date` (YYYY-MM-DD), `tags: [a, b, c]`
-- Images: upload to Cloudflare R2 first, then use the R2 URL in MDX. Do NOT store images in the repo.
+- Place in `content/` with descriptive filenames
+- **URL slug**: 必须为 ASCII（中文文件名会 404）。文件名可用中文，但须在 frontmatter 中指定英文 `slug` 做 URL。英文文件名无需额外指定 slug
+- Frontmatter must include: `title`, `description`, `date` (YYYY-MM-DD), `tags: [a, b, c]`, 可选 `slug`
+- Images: 放在 `public/images/`，MDX 中用 `![alt](/images/file.png)` 引用
 - MDX supports embedding React components — use for interactive demos, code sandboxes, etc.
 
 ### shadcn/ui
