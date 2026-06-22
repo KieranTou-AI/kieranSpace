@@ -49,3 +49,19 @@ npm run dev
 1. 在 `content/` 目录下编写 `.mdx` 文章
 2. `git add . && git commit && git push`
 3. Vercel 自动构建部署
+
+## 文章规范
+
+文章使用 MDX 格式，前置元数据（frontmatter）示例：
+
+```yaml
+---
+title: "文章标题"
+slug: english-slug        # URL 路径，须为 ASCII 字符
+description: "文章简述"
+date: "2026-06-22"
+tags: [tag1, tag2]
+---
+```
+
+> **注意**：`slug` 为 URL 路由路径，**必须使用英文字符**（中文 slug 会导致 404）。英文文件名会自动作为 slug，中文文件名则需手动指定。
