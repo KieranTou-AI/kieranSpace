@@ -4,7 +4,11 @@
       "Bash(npm run *)",
       "Bash(git add *)",
       "Bash(git commit *)",
-      "Bash(git push *)"
+      "Bash(git push *)",
+      "Bash(mkdir -p \"src/app/\\(main\\)/ai/[slug]\" \"src/app/\\(main\\)/ai/category/[category]\" \"src/app/\\(main\\)/database\" \"src/app/\\(main\\)/office\" \"src/app/\\(main\\)/upcoming\")"
+    ],
+    "additionalDirectories": [
+      "/Users/kierantou/Desktop/kieranSpace/src/app/(main)/ai"
     ]
   }
 }

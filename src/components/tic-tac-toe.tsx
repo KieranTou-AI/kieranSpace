@@ -162,7 +162,7 @@ export default function TicTacToe() {
           <div className="space-y-4 animate-fade-in">
             <p className="text-emerald-600 text-lg font-medium">胜局</p>
             <Link
-              href="/blog"
+              href="/ai"
               className="inline-flex items-center gap-2 rounded-full bg-zinc-900 px-8 py-3 text-sm font-medium text-white hover:bg-zinc-800 transition-all duration-300 hover:scale-105"
             >
               进入

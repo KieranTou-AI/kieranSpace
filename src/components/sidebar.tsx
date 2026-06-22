@@ -1,0 +1,40 @@
+"use client";
+
+import Link from "next/link";
+import { usePathname, useSearchParams } from "next/navigation";
+
+const FILTERS = [
+  { key: "", label: "全部" },
+  { key: "articles", label: "文章" },
+  { key: "tools", label: "工具栏" },
+];
+
+export default function Sidebar() {
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const currentCategory = searchParams.get("category") || "";
+
+  return (
+    <aside className="w-44 shrink-0">
+      <nav className="space-y-0.5 sticky top-20">
+        {FILTERS.map((f) => {
+          const href = f.key ? `${pathname}?category=${f.key}` : pathname;
+          const isActive = currentCategory === f.key;
+          return (
+            <Link
+              key={f.key}
+              href={href}
+              className={`block px-3 py-2 text-sm rounded-md transition-colors ${
+                isActive
+                  ? "bg-zinc-200/80 text-zinc-900 font-medium"
+                  : "text-zinc-500 hover:text-zinc-800 hover:bg-zinc-100"
+              }`}
+            >
+              {f.label}
+            </Link>
+          );
+        })}
+      </nav>
+    </aside>
+  );
+}

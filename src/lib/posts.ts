@@ -128,6 +128,26 @@ export function getPostsByCategory(category: string): Post[] {
   return getAllPosts().filter((post) => post.frontmatter.category === category);
 }
 
+export interface PaginatedPosts {
+  posts: Post[];
+  total: number;
+  totalPages: number;
+}
+
+export function getPaginatedPosts(
+  page: number,
+  perPage: number,
+  category?: string
+): PaginatedPosts {
+  const all = category ? getPostsByCategory(category) : getAllPosts();
+  const start = (page - 1) * perPage;
+  return {
+    posts: all.slice(start, start + perPage),
+    total: all.length,
+    totalPages: Math.ceil(all.length / perPage),
+  };
+}
+
 export function getAllCategories(): { key: string; displayName: string; count: number }[] {
   const posts = getAllPosts();
   const counts: Record<string, number> = {};
