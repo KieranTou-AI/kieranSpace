@@ -26,6 +26,9 @@ export default async function Post({ params }: PageProps) {
 
   return (
     <article className="mx-auto max-w-3xl px-6 py-16">
+      <Link href="/office" className="mb-8 inline-flex items-center gap-1 text-sm text-zinc-400 hover:text-zinc-600 transition-colors">
+        ← 返回
+      </Link>
       <header className="mb-10">
         <h1 className="mb-4 text-2xl font-medium text-zinc-800">{post.frontmatter.title}</h1>
         <div className="flex flex-wrap items-center gap-2 text-sm text-zinc-400">
