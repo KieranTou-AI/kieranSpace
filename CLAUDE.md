@@ -24,8 +24,8 @@ kieranSpace/
 │   ├── database/
 │   │   └── reports/        #   → 行业报告
 │   └── office/
-│       ├── articles/       #   → 随笔
-│       └── tools/          #   → 工具栏
+│       ├── efficiency/     #   → 提效
+│       └── recommendation/ #   → 软件推荐
 ├── public/                 # Static assets (favicon, etc.)
 ├── src/
 │   ├── app/                # Next.js App Router pages & layouts

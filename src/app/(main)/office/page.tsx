@@ -1,4 +1,4 @@
-import { getPaginatedPosts, getSectionDisplayName, getCategoryDisplayName } from "@/lib/posts";
+import { getPaginatedPosts, getSectionDisplayName, getCategoryDisplayName, getSectionFilters } from "@/lib/posts";
 import Link from "next/link";
 import Sidebar from "@/components/sidebar";
 import Pagination from "@/components/pagination";
@@ -21,10 +21,11 @@ export default async function OfficePage({ searchParams }: PageProps) {
   const category = params.category || undefined;
 
   const { posts, totalPages } = getPaginatedPosts(SECTION, page, PER_PAGE, category);
+  const filters = getSectionFilters(SECTION);
 
   return (
     <div className="mx-auto flex max-w-6xl gap-10 px-6 py-12">
-      <Sidebar section={SECTION} />
+      <Sidebar section={SECTION} filters={filters} />
       <main className="flex-1 min-w-0">
         {posts.length === 0 ? (
           <p className="text-center text-zinc-400 py-20">还没有文章</p>

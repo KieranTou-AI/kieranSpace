@@ -16,6 +16,14 @@ export const CATEGORY_MAP: Record<string, string> = {
   articles: "随笔",
   tools: "工具栏",
   reports: "行业报告",
+  efficiency: "提效",
+  recommendation: "软件推荐",
+};
+
+export const SECTION_CATEGORIES: Record<string, string[]> = {
+  ai: ["articles", "tools"],
+  database: ["reports"],
+  office: ["efficiency", "recommendation"],
 };
 
 export function getCategoryDisplayName(category: string): string {
@@ -211,11 +219,20 @@ export function getCategories(
     }
   }
 
-  return Object.keys(CATEGORY_MAP)
-    .filter((key) => counts[key] > 0)
+  return (SECTION_CATEGORIES[section] || [])
     .map((key) => ({
       key,
       displayName: CATEGORY_MAP[key],
-      count: counts[key],
+      count: counts[key] || 0,
     }));
+}
+
+export function getSectionFilters(
+  section: string
+): { key: string; label: string }[] {
+  const categories = getCategories(section);
+  return [
+    { key: "", label: "全部" },
+    ...categories.map((c) => ({ key: c.key, label: c.displayName })),
+  ];
 }
