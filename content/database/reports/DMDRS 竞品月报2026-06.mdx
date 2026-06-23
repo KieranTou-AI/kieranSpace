@@ -1,0 +1,116 @@
+---
+title: "DMDRS 竞品月报2026-06-23"
+description: "DMDRS 竞品月报 — 统计窗口 2026-05-24 至 2026-06-23，覆盖 Striim、Debezium、Airbyte 等核心竞品动态"
+slug: dm-drs-competitive-report-2026-06
+date: "2026-06-23"
+tags: [database, DRS, 竞品分析, DMDRS, 行业报告]
+---
+
+# DMDRS 竞品月报
+
+- 统计窗口：2026-05-24 至 2026-06-23
+- 生成日期：2026-06-23
+- 说明：正文仅纳入统计窗口内可核验信息。超窗信息或日期不明信息仅进入“未采纳信息/待确认线索”。
+
+## 1. 本期关键结论
+
+1. `事实+推断`：近 30 天内，固定深度跟踪池里公开可核验的版本推进主要集中在 `Striim` 和 `Debezium`，其余多数产品未检索到可明确落在本窗口内的公开更新页或发布说明。  
+依据：Striim 当前 release notes 页标注 `Last modified: 2026-05-29`，且当前版本为 `5.4.0.6`；Debezium 官方 Tag 页在本窗口内连续出现 `v3.6.0.Beta1`、`v3.5.2.Final`、`v3.6.0.Beta2`。
+
+2. `事实+推断`：Striim 本期公开更新重点不在"新源/新目标扩展"，而在运行时升级、兼容性收敛和复制链路稳定性修复，说明其近月投入更偏向大规模生产运行可用性。  
+依据：Striim 5.4.0.6 当前 release notes 明确写入 `JDK 17` 升级要求、旧版 Kafka Reader/Writer 适配器不再支持，以及 Oracle Reader、Kafka、checkpoint、lag、恢复等多项修复。
+
+3. `事实+推断`：Debezium 在同一统计窗口内同时推进 `稳定维护线` 和 `下一代预览线`，版本节奏快于多数传统封闭式 DRS 产品。对 DMDRS 的直接压力不是交付形态，而是 CDC 能力底座与生态心智。  
+依据：Debezium 官方 Tag 页显示 `v3.5.2.Final` 发布于 2026-06-02，`v3.6.0.Beta2` 发布于 2026-06-12，且 2026-05-29 已有 `v3.6.0.Beta1`。
+
+4. `事实+推断`：轻量观察池里，Airbyte Agents 在本窗口内连续发布"工作空间隔离、按文档执行连接器操作、超额用量拦截"等能力，表明邻近赛道正把"连接器+自动化+治理"打包成新入口。DMDRS 在自助化运维和最小权限治理上存在可借鉴点。  
+依据：Airbyte Agents 在 2026-06-12 发布 workspace-scope、文档先读后执行和 token 限权；2026-06-09 发布 3x 用量封顶；2026-06-05 发布只读 execute 免人工审批。
+
+## 2. 重要功能更新
+
+- DMDRS：本期未发现近一个月内可核验更新。
+- Oracle GoldenGate：本期未发现近一个月内可核验更新。
+- Qlik Replicate：本期未发现近一个月内可核验更新。
+- Striim：`事实`：官方当前 release notes 页于 2026-05-29 更新，当前版本为 `5.4.0.6`。本期可核验变化包括：升级到 `JDK 17` 的运行要求；不再支持 Kafka Reader/Writer `0.11` 与 `2.1.1`；Oracle Reader、Kafka 适配器、checkpoint、lag、恢复等大量稳定性修复；已知问题中公开了 Oracle 26ai 场景下 OJet 的字典 SCN 处理要求。
+- 华为云 DRS：本期未发现近一个月内可核验更新。
+- 阿里云 DTS：本期未发现近一个月内可核验更新。
+- 腾讯云 DTS：本期未发现近一个月内可核验更新。
+- AWS DMS：本期未发现近一个月内可核验更新。
+- OceanBase OMS：本期未发现近一个月内可核验更新。
+- TiDB DM / TiCDC：本期未发现近一个月内可核验更新。
+- NineData：本期未发现近一个月内可核验更新。
+- TapData：本期未发现近一个月内可核验更新。
+- CloudCanal：本期未发现近一个月内可核验更新。
+- Flink CDC：本期未发现近一个月内可核验更新。
+- Debezium：`事实`：官方 Tag 页在窗口内连续出现 `v3.6.0.Beta1`（2026-05-29）、`v3.5.2.Final`（2026-06-02）、`v3.6.0.Beta2`（2026-06-12）。`说明`：本期仅确认版本推进；未检索到同窗口内可直接对应的官方功能说明页，因此不对具体新功能作正文结论。
+- Canal：本期未发现近一个月内可核验更新。
+
+## 3. 市场动态
+
+- `事实`：本期已按"近30天客户进展必查"口径检索固定深度跟踪池与轻量观察池主要产品的官方新闻、案例库、发布页和公告页，未发现可明确落在 `2026-05-24` 至 `2026-06-23` 窗口内、且能准确归因到具体产品的新客户案例、签约或落地公告。
+- `事实`：Airbyte Agents 于 2026-06-09 增加"组织用量超过套餐内 Agent Operations 的 3 倍后阻断操作"的机制，属于明确的商业/用量控制动作，显示邻近赛道开始更强地把 AI 自动化能力产品化和计费化。
+- `事实`：Airbyte Agents 于 2026-06-11、2026-06-12 连续推进工作空间隔离、workspace-scoped token 和连接器文档检索能力，显示其在多租户治理和 agent 可信执行上加速补齐。
+- `事实`：本期未发现固定深度跟踪池内可核验的新增客户进展、重大生态合作或公开价格调整公告。
+
+## 4. 对 DMDRS 的威胁分级
+
+- Striim：`中`。  
+`事实`：2026-05-29 更新的当前版本页集中处理 Oracle Reader、Kafka 适配器、checkpoint、lag 和恢复问题。  
+`推断链路`：这类修复更偏向成熟项目的生产可用性增强，而不是能力面扩张；对 DMDRS 的威胁主要落在大型异构实时复制项目的稳定性交付，而非短期新增功能覆盖。  
+`结论`：本期上调证据不足，维持中等威胁观察。
+
+- Debezium：`技术替代`。  
+`事实`：2026-05-29 至 2026-06-12 之间连续推进 Beta 与 Final 两条版本线。  
+`推断链路`：Debezium 不是 DMDRS 的"一体化替代品"，但它持续强化 CDC 底座心智，容易被上层平台、云服务或自研数据链路复用，替代 DMDRS 的部分捕获与分发技术位。  
+`结论`：本期维持技术替代高关注。
+
+- Airbyte Agents（轻量观察池）：`场景替代`。  
+`事实`：工作空间隔离、文档先读后执行、免审批只读调用、超额用量拦截，均在本窗口内上线。  
+`推断链路`：这并不直接替代数据库级复制，但会在"轻量接入、查询、自动化运维、自助工作流"场景分流一部分原本可能进入传统同步/集成工具的需求。  
+`结论`：对 DMDRS 属于邻近场景替代，需关注而非正面能力对标。
+
+- 其余固定深度跟踪池产品：本期无新增可核验证据，不据此调整威胁判断基线。
+
+## 5. 可借鉴能力
+
+- `建议`：借鉴 Striim 的升级显式化做法。DMDRS 已有多模块架构、TLS 链路和多拓扑同步能力，但升级路径披露粒度仍可加强。建议在 DMDRS 控制台或发布说明中增加"版本升级前检查项、适配器兼容矩阵、运行时依赖变更、回退策略"。
+
+- `建议`：借鉴 Debezium 的"双线版本节奏"。DMDRS 可考虑把"稳定维护版"和"预览能力版"节奏拆开，尤其是针对新源端/新目标端支持、DDL 捕获增强和复杂拓扑能力，减少大版本集中兑现带来的验证压力。
+
+- `建议`：借鉴 Airbyte Agents 的"文档先读后执行"和 workspace-scoped token。DMDRS 当前定位并非 agent 产品，但在运维 API、控制台向导、脚本化部署中，可以增加"执行前规则校验、最小权限访问域、项目级资源隔离、变更链路回溯"能力，提升企业治理适配度。
+
+- `建议`：借鉴 Airbyte 的用量护栏。若 DMDRS 后续发展托管版或统一运维平台，可增加按链路、任务、带宽、延迟和失败重试次数的配额告警与硬阈值保护，避免共享平台上的失控任务扩散。
+
+## 6. 未采纳信息/待确认线索
+
+- AWS DMS：官方 release notes 页当前置顶 `3.6.0`，但页面可见内容未给出清晰发布时间；因日期不明，未纳入"本期新增动态"。
+- Google Datastream：官方 release notes 最近一条为 `2026-04-16`，超出本期窗口，未纳入正文新增动态。
+- Google Database Migration Service：官方 release notes 最近一条为 `2026-04-22`，超出本期窗口，未纳入正文新增动态。
+- Flink CDC：可检索到的官方发布公告早于本期窗口，未纳入正文新增动态。
+- 若干商业产品（Oracle GoldenGate、Qlik Replicate、华为云 DRS、阿里云 DTS、腾讯云 DTS、OceanBase OMS、NineData、TapData、CloudCanal）在本次公开检索中未获得可明确落在 2026-05-24 至 2026-06-23 的官方更新页、新闻稿或发布说明；因此仅记为"本期未发现近一个月内可核验更新"，不进一步推导。
+
+## 7. 来源清单
+
+1. `DMDRS产品介绍`，达梦，文档版本日期 2025-10-14，访问日期 2026-06-23。  
+   链接：[DMDRS_Product_Introduction.html](/Users/kierantou/Desktop/DRS调研/DMDRS产品手册_V5.2.5.1_20251014_副本/pages/DMDRS_Product_Introduction.html)
+
+2. `DMDRS参考手册`，达梦，文档版本日期 2025-10-14，访问日期 2026-06-23。  
+   链接：[DMDRS_Reference_Manual.html](/Users/kierantou/Desktop/DRS调研/DMDRS产品手册_V5.2.5.1_20251014_副本/pages/DMDRS_Reference_Manual.html)
+
+3. `Release notes`，Striim，`Last modified: 2026-05-29`，访问日期 2026-06-23。  
+   链接：[Striim Release notes](https://www.striim.com/docs/en/release-notes.html)
+
+4. `Tags: debezium/debezium`，Debezium / GitHub，标签日期 `2026-05-29`、`2026-06-02`、`2026-06-12`，访问日期 2026-06-23。  
+   链接：[Debezium tags](https://github.com/debezium/debezium/tags)
+
+5. `Airbyte Agents release notes`，Airbyte，条目日期 `2026-06-05`、`2026-06-09`、`2026-06-11`、`2026-06-12`、`2026-06-19`，访问日期 2026-06-23。  
+   链接：[Airbyte Agents release notes](https://docs.airbyte.com/release_notes/agents)
+
+6. `Datastream release notes`，Google Cloud，最近条目日期 `2026-04-16`，访问日期 2026-06-23。  
+   链接：[Google Datastream release notes](https://cloud.google.com/datastream/docs/release-notes)
+
+7. `Database Migration Service release notes`，Google Cloud，最近条目日期 `2026-04-22`，访问日期 2026-06-23。  
+   链接：[Google DMS release notes](https://cloud.google.com/database-migration/docs/release-notes)
+
+8. `AWS DMS release notes`，AWS，页面访问日期 2026-06-23。  
+   链接：[AWS DMS release notes](https://docs.aws.amazon.com/dms/latest/userguide/CHAP_ReleaseNotes.html)
