@@ -1,4 +1,4 @@
-import { getPaginatedPosts, getSectionDisplayName } from "@/lib/posts";
+import { getPaginatedPosts, getSectionDisplayName, getCategoryDisplayName } from "@/lib/posts";
 import Link from "next/link";
 import Sidebar from "@/components/sidebar";
 import Pagination from "@/components/pagination";
@@ -49,7 +49,7 @@ export default async function OfficePage({ searchParams }: PageProps) {
                   {post.frontmatter.category && (
                     <Link href={`/office?category=${post.frontmatter.category}`}
                       className="text-zinc-400 hover:text-zinc-600 transition-colors">
-                      {post.frontmatter.category === "articles" ? "随笔" : "工具栏"}
+                      {getCategoryDisplayName(post.frontmatter.category)}
                     </Link>
                   )}
                   {post.frontmatter.tags?.map((tag) => (

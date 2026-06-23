@@ -15,6 +15,7 @@ export const SECTIONS: Record<string, string> = {
 export const CATEGORY_MAP: Record<string, string> = {
   articles: "随笔",
   tools: "工具栏",
+  reports: "行业报告",
 };
 
 export function getCategoryDisplayName(category: string): string {

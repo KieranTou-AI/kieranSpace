@@ -17,9 +17,15 @@ kieranSpace — personal blog & tutorial site built with Next.js. No backend, no
 
 ```
 kieranSpace/
-├── content/                # MDX blog posts organized by category subdirectories
-│   ├── articles/           #   → 文章
-│   └── tools/              #   → 工具栏
+├── content/                # MDX blog posts organized by section → category
+│   ├── ai/
+│   │   ├── articles/       #   → 随笔
+│   │   └── tools/          #   → 工具栏
+│   ├── database/
+│   │   └── reports/        #   → 行业报告
+│   └── office/
+│       ├── articles/       #   → 随笔
+│       └── tools/          #   → 工具栏
 ├── public/                 # Static assets (favicon, etc.)
 ├── src/
 │   ├── app/                # Next.js App Router pages & layouts
@@ -51,8 +57,8 @@ kieranSpace/
 
 ### MDX Blog Posts
 
-- Place in `content/` subdirectories by category (e.g., `content/articles/`, `content/tools/`)
-- **Categories**: the directory name maps to a Chinese display name via `CATEGORY_MAP` in `src/lib/posts.ts`. Valid categories: `articles` → 文章, `tools` → 工具栏. Posts in root `content/` have no category
+- Place in `content/{section}/{category}/` (e.g., `content/ai/articles/`, `content/database/reports/`)
+- **Categories**: directory names map to Chinese display names via `CATEGORY_MAP` in `src/lib/posts.ts`. Valid categories: `articles` → 随笔, `tools` → 工具栏, `reports` → 行业报告. Posts in section root have no category
 - **URL slug**: 必须为 ASCII（中文文件名会 404）。文件名可用中文，但须在 frontmatter 中指定英文 `slug` 做 URL。英文文件名无需额外指定 slug
 - Frontmatter must include: `title`, `description`, `date` (YYYY-MM-DD), `tags: [a, b, c]`, 可选 `slug`. `category` 由目录自动推断，无需手写
 - Images: 放在 `public/images/`，MDX 中用 `![alt](/images/file.png)` 引用

@@ -10,7 +10,12 @@
       "Bash(git checkout *)",
       "Bash(npm start *)",
       "Bash(curl -s http://localhost:3000/ai)",
-      "Bash(curl -s http://localhost:3000/database)"
+      "Bash(curl -s http://localhost:3000/database)",
+      "Bash(xxd)",
+      "Bash(kill 93078)",
+      "Bash(curl -s -I http://localhost:3000/images/vibecoding1.png)",
+      "Bash(git check-ignore *)",
+      "Bash(echo \"exit: $?\")"
     ],
     "additionalDirectories": [
       "/Users/kierantou/Desktop/kieranSpace/src/app/(main)/ai"

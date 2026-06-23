@@ -1,4 +1,4 @@
-import { getPaginatedPosts, getSectionDisplayName } from "@/lib/posts";
+import { getPaginatedPosts, getSectionDisplayName, getCategoryDisplayName } from "@/lib/posts";
 import Link from "next/link";
 import Sidebar from "@/components/sidebar";
 import Pagination from "@/components/pagination";
@@ -6,6 +6,11 @@ import type { Metadata } from "next";
 
 const SECTION = "database";
 const PER_PAGE = 5;
+
+const DATABASE_FILTERS = [
+  { key: "", label: "全部" },
+  { key: "reports", label: "行业报告" },
+];
 
 export const metadata: Metadata = {
   title: `${getSectionDisplayName(SECTION)} — kieranSpace`,
@@ -24,7 +29,7 @@ export default async function DatabasePage({ searchParams }: PageProps) {
 
   return (
     <div className="mx-auto flex max-w-6xl gap-10 px-6 py-12">
-      <Sidebar section={SECTION} />
+      <Sidebar section={SECTION} filters={DATABASE_FILTERS} />
 
       <main className="flex-1 min-w-0">
         {posts.length === 0 ? (
@@ -50,7 +55,7 @@ export default async function DatabasePage({ searchParams }: PageProps) {
                   {post.frontmatter.category && (
                     <Link href={`/database?category=${post.frontmatter.category}`}
                       className="text-zinc-400 hover:text-zinc-600 transition-colors">
-                      {post.frontmatter.category === "articles" ? "随笔" : "工具栏"}
+                      {getCategoryDisplayName(post.frontmatter.category)}
                     </Link>
                   )}
                   {post.frontmatter.tags?.map((tag) => (

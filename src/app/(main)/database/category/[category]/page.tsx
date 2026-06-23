@@ -8,6 +8,11 @@ import type { Metadata } from "next";
 const SECTION = "database";
 const PER_PAGE = 5;
 
+const DATABASE_FILTERS = [
+  { key: "", label: "全部" },
+  { key: "reports", label: "行业报告" },
+];
+
 export async function generateStaticParams() {
   return getCategories(SECTION).map((c) => ({ category: c.key }));
 }
@@ -35,7 +40,7 @@ export default async function Page({ params, searchParams }: PageProps) {
 
   return (
     <div className="mx-auto flex max-w-6xl gap-10 px-6 py-12">
-      <Sidebar section={SECTION} />
+      <Sidebar section={SECTION} filters={DATABASE_FILTERS} />
       <main className="flex-1 min-w-0">
         <h1 className="mb-8 text-xl font-medium text-zinc-800">{name}</h1>
         {posts.length === 0 ? (
