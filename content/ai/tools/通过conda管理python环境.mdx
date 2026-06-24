@@ -6,3 +6,100 @@ date: "2026-06-23"
 tags: [python, conda, tools]
 ---
 
+## 下载&安装conda
+
+`curl -L -O https://mirrors.tuna.tsinghua.edu.cn/.../Miniforge3-MacOSX-arm64.sh`
+
+从清华镜像站下载 Miniforge 安装脚本。
+- L：如果链接有跳转，继续跟随跳转
+- O：用远程文件名保存到当前目录
+- MacOSX-arm64：适用于 Apple Silicon 芯片，比如 M1/M2/M3/M4
+
+`bash Miniforge3-MacOSX-arm64.sh`
+
+运行刚下载的安装脚本，开始安装 Miniforge。
+
+`~/miniforge3/bin/conda --version`
+
+检查 Conda 是否安装成功，并显示版本号。
+
+`~/miniforge3/bin/conda init zsh`
+
+把 Conda 初始化到 zsh 终端里。它通常会修改你的 `~/.zshrc` 文件，添加一行 `source ~/miniforge3/bin/activate`。
+这样打开新终端时，可以直接使用 `conda` 命令，而不需要每次都输入完整路径。
+
+## 命令行使用
+
+先新建一个环境，比如叫 `myenv`：
+
+```bash
+conda create -n myenv python=3.11
+```
+
+进入环境：
+
+```bash
+conda activate myenv
+```
+
+看到命令行前面出现类似：
+
+```bash
+(myenv) kierantou@192 ~ %
+```
+
+就说明已经在这个环境里了。
+
+安装包：
+
+```bash
+conda install numpy pandas matplotlib
+```
+
+或者：
+
+```bash
+pip install requests
+```
+
+退出环境：
+
+```bash
+conda deactivate
+```
+
+查看已有环境：
+
+```bash
+conda env list
+
+## VScode使用
+
+1. 打开 VS Code
+2. 打开你的项目文件夹
+3. 按 `Cmd + Shift + P`
+4. 搜索并选择：
+
+```text
+Python: Select Interpreter
+```
+
+5. 选择你刚创建的环境，比如：
+
+```text
+myenv  ~/miniforge3/envs/myenv/bin/python
+```
+
+如果列表里没出现，可以选：
+
+```text
+Enter interpreter path...
+```
+
+然后填：
+
+```bash
+/Users/kierantou/miniforge3/envs/myenv/bin/python
+
+6. 之后 VS Code 右下角应该会显示你选中的 Python 环境
+
