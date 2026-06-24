@@ -1,0 +1,106 @@
+---
+title: "PRD 生成数据字典 Skill"
+slug: prd-to-data-dictionary-skill
+description: "基于产品需求文档（PRD）自动生成数据字典的 AI Skill，提升数据建模效率"
+date: "2026-06-24"
+tags: [AI, skill, data-dictionary, PRD, productivity]
+---
+
+> 本文超链接均为本地文件，涉及保密不支持点击。仅做思路分享。
+
+这个 skill 是一个“流程型 skill”，不是代码程序。它主要通过 `SKILL.md` 给 Codex 一套固定工作流程，让 Codex 在处理 PRD 数据字典时按步骤执行。
+
+**文件结构**
+`/Users/kierantou/.codex/skills/auto-fill-data-dictionary` 里主要有 3 个有效文件：
+
+- [SKILL.md](/Users/kierantou/.codex/skills/auto-fill-data-dictionary/SKILL.md:1)：核心说明文件，定义 skill 名称、触发描述、工作流、输出规则。
+- [references/data-dictionary-standard.md](/Users/kierantou/.codex/skills/auto-fill-data-dictionary/references/data-dictionary-standard.md:1)：数据字典标准，定义 DT 和 OT 的缩写含义。
+- [agents/openai.yaml](/Users/kierantou/.codex/skills/auto-fill-data-dictionary/agents/openai.yaml:1)：展示信息，控制在 Codex 里看到的名称、简介和默认提示词。
+
+**触发逻辑**
+触发入口在 [SKILL.md](/Users/kierantou/.codex/skills/auto-fill-data-dictionary/SKILL.md:1) 的 frontmatter：
+
+```yaml
+name: auto-fill-data-dictionary
+description: ...
+```
+
+当用户说“生成数据字典”“补全数据字典”“从 PRD 提取字段”“判断 DT/OT”等类似需求时，description 会让 Codex 判断应该使用这个 skill。
+
+**核心流程**
+这个 skill 的核心逻辑在 [SKILL.md](/Users/kierantou/.codex/skills/auto-fill-data-dictionary/SKILL.md:14) 的 `Workflow`。
+
+它把任务拆成三个确认门：
+
+1. 先把用户复制来的 PRD 内容整理成标准 Markdown  
+   规则在 [SKILL.md](/Users/kierantou/.codex/skills/auto-fill-data-dictionary/SKILL.md:16)：保留标题层级、编号、中文原文，把表格和列表整理干净，但不补充不存在的需求。
+
+2. 让用户确认 Markdown  
+   关键规则在 [SKILL.md](/Users/kierantou/.codex/skills/auto-fill-data-dictionary/SKILL.md:23)：用户没确认前，不能开始提取字段，也不能直接生成数据字典。
+
+3. 再提取字段范围，让用户确认  
+   字段范围包括表单输入项、配置项、表格列、详情页展示字段、按钮、可点击文本、明确提到的隐藏后台字段等，定义在 [SKILL.md](/Users/kierantou/.codex/skills/auto-fill-data-dictionary/SKILL.md:25)。
+
+用户确认字段范围后，才生成最终数据字典。
+
+**数据字典输出格式**
+默认输出 5 列，定义在 [SKILL.md](/Users/kierantou/.codex/skills/auto-fill-data-dictionary/SKILL.md:34)：
+
+```text
+No.
+字段
+描述
+DT
+OT
+```
+
+如果用户给了自己的模板，则优先按用户模板。
+
+**DT 判断逻辑**
+DT 是“数据类型”，判断规则在 [SKILL.md](/Users/kierantou/.codex/skills/auto-fill-data-dictionary/SKILL.md:41)。
+
+大致逻辑是：
+
+- 文本、名称、ID、编码、枚举标签：`C`
+- 数字、数量、大小、比例、价格、时长：`N`
+- 只有日期：`D`
+- 日期加时间：`DT`
+- 只有时间：`T`
+- 空状态：`E`
+- 按钮：`B`
+
+这些缩写的正式定义来自 [references/data-dictionary-standard.md](/Users/kierantou/.codex/skills/auto-fill-data-dictionary/references/data-dictionary-standard.md:5)。
+
+**OT 判断逻辑**
+OT 是“操作类型”，判断规则在 [SKILL.md](/Users/kierantou/.codex/skills/auto-fill-data-dictionary/SKILL.md:50)。
+
+主要逻辑是：
+
+- 必填：`M`
+- 选填：`O`
+- 保存后可修改：`A`
+- 保存后不可修改：`FA`
+- 只展示：`D`
+- 可点击文本：`TC`
+- 文本输入框：`TB`
+- 隐藏后台字段：`H`
+- 下拉单选：`DRB`
+- 下拉多选：`DMB`
+- 单选框：`R`
+- 开关：`S`
+- 按钮根据状态用 `BL`、`BG`、`BD`
+
+正式缩写表在 [references/data-dictionary-standard.md](/Users/kierantou/.codex/skills/auto-fill-data-dictionary/references/data-dictionary-standard.md:17)。
+
+**比较关键的设计**
+这个 skill 最重要的逻辑不是“自动猜”，而是“分阶段确认”。
+
+它刻意要求：
+
+- 先确认 Markdown，再提字段。
+- 先确认字段范围，再生成表格。
+- PRD 没写清楚的内容写 `待确认`，不要自己编。
+- 不额外添加数据库字段，除非 PRD 明确提到，或用户要求推断隐藏字段。
+- 同一个业务概念如果既是筛选项又是表格列，需要按场景拆成不同字段，比如筛选项可能是 `DRB`，表格列是 `D`。
+
+所以它的定位是：让 Codex 按你的数据字典规范稳定产出，而不是一次性自由发挥。
