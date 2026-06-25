@@ -81,15 +81,25 @@ conda env create -f environment.yml
 
 > LangFuse本地部署需要docker-compose，先不搞这么复杂，使用云端部署，免费额度也够用了。
 
+### 4.用Supabase模拟数仓
 
+使用AI自动生成SQL建表语句，创建Supabase项目，跑seed.py生成测试数据，模拟业务数据。
 
+Supabase还要负责存项目元数据库 - eval_results跑评测后存结果，按时间/版本查趋势。
 
+以上建表语句保存在github中。
 
+这里其他的项目元数据为什么不用supabase存？
 
+- ✅ intent_labels   → Python Enum（意图识别的标签 放到代码里即可）
 
+- ✅ table_metadata  → JSON 文件（当前方案（table_metadata.json → 加载 → 塞进 SlotAgent/CodeAgent 的 prompt）对 5-10 张表完全够用。）
 
+- ✅ eval_datasets   → JSONL + Git（评测用例应该和代码一起版本化）
+  
+- ⏸️ conversations   → LangGraph MemorySaver（当前够用)
 
+> 多轮对话需要按 thread_id 查历史 state。LangGraph 自带 MemorySaver（内存），已经有 checkpoint。持久化到 Supabase JSONB 是为了：跨进程共享、重启不丢、后续做对话分析。
+> 不过目前 LangGraph 用的是 MemorySaver（内存），切到 Supabase 需要实现 BaseCheckpointSaver。现在先不搞，等需要多轮对话持久化时再说.
 
-第5步   接 Supabase             → 建项目、跑 seed.py
-第6步   启动 FastAPI + 测试 API
-第7步   启动 Streamlit 前端
+### 5. 
