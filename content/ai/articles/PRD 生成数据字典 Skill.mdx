@@ -8,43 +8,62 @@ tags: [AI, skill, data-dictionary, PRD, productivity]
 
 > 本文超链接均为本地文件，涉及保密不支持点击。仅做思路分享。
 
-这个 skill 是一个“流程型 skill”，不是代码程序。它主要通过 `SKILL.md` 给 Codex 一套固定工作流程，让 Codex 在处理 PRD 数据字典时按步骤执行。
+**Skill 定位**
+
+`auto-fill-data-dictionary` 是一个面向 PRD 的数据字典生成 skill。它解决的问题是：把从在线文档复制出来的 PRD 内容，先整理成结构化 Markdown，再从中识别字段，最后按照统一的 DT/OT 规范生成数据字典。
+
+它不是一个脚本型 skill，而是一个“流程型 + 规范型” skill。核心价值在于约束 Codex 的工作方式，让它不要一次性自由发挥，而是按固定步骤确认、拆分、推导和输出。
 
 **文件结构**
-`/Users/kierantou/.codex/skills/auto-fill-data-dictionary` 里主要有 3 个有效文件：
 
-- [SKILL.md](/Users/kierantou/.codex/skills/auto-fill-data-dictionary/SKILL.md:1)：核心说明文件，定义 skill 名称、触发描述、工作流、输出规则。
-- [references/data-dictionary-standard.md](/Users/kierantou/.codex/skills/auto-fill-data-dictionary/references/data-dictionary-standard.md:1)：数据字典标准，定义 DT 和 OT 的缩写含义。
-- [agents/openai.yaml](/Users/kierantou/.codex/skills/auto-fill-data-dictionary/agents/openai.yaml:1)：展示信息，控制在 Codex 里看到的名称、简介和默认提示词。
+当前目录结构如下：
 
-**触发逻辑**
-触发入口在 [SKILL.md](/Users/kierantou/.codex/skills/auto-fill-data-dictionary/SKILL.md:1) 的 frontmatter：
+```text
+auto-fill-data-dictionary/
+├── .gitignore
+├── SKILL.md
+├── agents/
+│   └── openai.yaml
+└── references/
+    └── data-dictionary-standard.md
+```
+
+**1. SKILL.md**
+
+[SKILL.md](/Users/kierantou/.codex/skills/auto-fill-data-dictionary/SKILL.md:1) 是整个 skill 的核心文件，包含三类内容：
+
+第一类是 frontmatter，也就是最上方的元信息：
 
 ```yaml
 name: auto-fill-data-dictionary
 description: ...
 ```
 
-当用户说“生成数据字典”“补全数据字典”“从 PRD 提取字段”“判断 DT/OT”等类似需求时，description 会让 Codex 判断应该使用这个 skill。
+`name` 是 skill 的调用名称，用户可以通过 `$auto-fill-data-dictionary` 显式触发。
 
-**核心流程**
-这个 skill 的核心逻辑在 [SKILL.md](/Users/kierantou/.codex/skills/auto-fill-data-dictionary/SKILL.md:14) 的 `Workflow`。
+`description` 是触发说明。Codex 会根据用户请求和 description 判断是否应该使用这个 skill。这里特意写了“PRD”“data dictionary”“DT”“OT”“split”等关键词，让它在用户要求生成、补全、拆分、规范化数据字典时能被命中。
 
-它把任务拆成三个确认门：
+第二类是工作流，也就是 `Workflow` 部分。
 
-1. 先把用户复制来的 PRD 内容整理成标准 Markdown  
-   规则在 [SKILL.md](/Users/kierantou/.codex/skills/auto-fill-data-dictionary/SKILL.md:16)：保留标题层级、编号、中文原文，把表格和列表整理干净，但不补充不存在的需求。
+这个 skill 的主流程分为几个阶段：
+
+1. 先把 PRD 转成 Markdown  
+   保留标题层级、编号、原始中文、表格、列表，不在这个阶段补充需求。
 
 2. 让用户确认 Markdown  
-   关键规则在 [SKILL.md](/Users/kierantou/.codex/skills/auto-fill-data-dictionary/SKILL.md:23)：用户没确认前，不能开始提取字段，也不能直接生成数据字典。
+   用户确认前，不允许提取字段，也不允许直接生成数据字典。
 
-3. 再提取字段范围，让用户确认  
-   字段范围包括表单输入项、配置项、表格列、详情页展示字段、按钮、可点击文本、明确提到的隐藏后台字段等，定义在 [SKILL.md](/Users/kierantou/.codex/skills/auto-fill-data-dictionary/SKILL.md:25)。
+3. 提取字段范围  
+   包括表单字段、配置项、表格列、详情页展示字段、按钮、可点击文本、状态字段、枚举字段、日期时间字段等。
 
-用户确认字段范围后，才生成最终数据字典。
+4. 让用户确认字段范围  
+   这是第二个确认门，避免漏字段或误收字段。
 
-**数据字典输出格式**
-默认输出 5 列，定义在 [SKILL.md](/Users/kierantou/.codex/skills/auto-fill-data-dictionary/SKILL.md:34)：
+5. 按模块拆分 DT/OT 组  
+   这是后来重点优化的逻辑。它要求不要把一个需求全部塞进一个超长表格，而是按模块、页面、弹窗、筛选栏、表格列表、操作按钮、监控指标等拆成多个小表。
+
+6. 为每组生成独立数据字典表  
+   默认格式是：
 
 ```text
 No.
@@ -54,53 +73,205 @@ DT
 OT
 ```
 
-如果用户给了自己的模板，则优先按用户模板。
+7. 推断 DT 和 OT  
+   根据 PRD 中的语义判断数据类型和操作类型。
 
-**DT 判断逻辑**
-DT 是“数据类型”，判断规则在 [SKILL.md](/Users/kierantou/.codex/skills/auto-fill-data-dictionary/SKILL.md:41)。
+第三类是输出规则，也就是 `Output Rules` 部分。
 
-大致逻辑是：
+这里约束最终数据字典的边界，例如：
 
-- 文本、名称、ID、编码、枚举标签：`C`
-- 数字、数量、大小、比例、价格、时长：`N`
-- 只有日期：`D`
-- 日期加时间：`DT`
-- 只有时间：`T`
+- 字段名保持 PRD 原语言。
+- 同名字段如果模块、位置、行为、DT、OT 不同，必须拆开。
+- 不添加 PRD 没写的数据库字段。
+- 权限角色、国际化、后台 log 默认不进入数据字典。
+- 拖拽、鼠标手势、排序等纯交互能力默认不进入数据字典。
+- 表格字段自定义这类公共组件，只记录外部可见按钮，不展开内部配置字段。
+- PRD 没写清楚的地方写 `待确认`，不要编造。
+
+**2. references/data-dictionary-standard.md**
+
+[references/data-dictionary-standard.md](/Users/kierantou/.codex/skills/auto-fill-data-dictionary/references/data-dictionary-standard.md:1) 是数据字典缩写标准。
+
+它把 DT 和 OT 的定义单独抽出来，避免把标准和流程混在一起。
+
+DT 是数据类型，例如：
+
+| 类型 | 缩写 |
+|---|---|
+| 字符 | C |
+| 数字 | N |
+| 日期 | D |
+| 日期时间 | DT |
+| 时间 | T |
+| 空 | E |
+| 按钮 | B |
+
+OT 是操作类型，例如：
+
+| 类型 | 缩写 |
+|---|---|
+| 必填项 | M |
+| 选填项 | O |
+| 可修改 | A |
+| 不可修改 | FA |
+| 显示项 | D |
+| 可点击文本 | TC |
+| 按钮长显 | BL |
+| 按钮置灰 | BG |
+| 按钮消失 | BD |
+| 文本输入框 | TB |
+| 隐藏项 | H |
+| 下拉单选框 | DRB |
+| 下拉多选框 | DMB |
+| 单选框 | R |
+| 开关 | S |
+
+`SKILL.md` 中明确要求：最终生成数据字典前必须加载这个 reference，并严格使用这里定义的缩写。
+
+这样设计的好处是：如果以后 DT/OT 标准变化，只需要改 reference 文件，不需要大改主流程。
+
+**3. agents/openai.yaml**
+
+[agents/openai.yaml](/Users/kierantou/.codex/skills/auto-fill-data-dictionary/agents/openai.yaml:1) 是 UI 展示配置。
+
+内容很短：
+
+```yaml
+interface:
+  display_name: "自动填充数据字典"
+  short_description: "从PRD提取字段，并按模块拆分补全DT/OT数据字典"
+  default_prompt: "Use $auto-fill-data-dictionary to extract PRD fields and fill a standardized data dictionary."
+```
+
+它控制 Codex 中这个 skill 的展示名称、简介和默认提示词。
+
+这里的 `short_description` 已经同步更新为“按模块拆分补全 DT/OT 数据字典”，这样从列表里就能看出这个 skill 的主要能力不是简单提字段，而是会按模块拆分。
+
+**4. .gitignore**
+
+`.gitignore` 目前主要用于忽略 macOS 自动生成的 `.DS_Store` 文件，避免把系统文件提交到 GitHub。
+
+**核心逻辑设计**
+
+这个 skill 最重要的设计不是“自动生成”，而是“可控生成”。
+
+它有两个确认门：
+
+第一个确认门：Markdown 确认。  
+因为从在线文档复制出来的 PRD 经常格式混乱，如果不先整理结构，后面字段提取会不稳定。
+
+第二个确认门：字段范围确认。  
+数据字典最怕漏字段，也怕把不该写的东西写进去。所以 skill 要先列出字段范围，让用户确认后再生成 DT/OT。
+
+**模块拆分逻辑**
+
+这是当前版本的重点能力。
+
+原来一个需求只生成一个大表，会导致两个问题：
+
+1. 表特别长，不方便审阅和复制。
+2. 同名字段容易混淆。
+
+例如“工程名”这个字段，在不同位置含义不同：
+
+- 在筛选栏中，它是筛选条件，OT 可能是 `O/TB` 或 `O/DRB`
+- 在表格列中，它是展示字段，OT 是 `D`
+- 在编辑弹窗中，它是表单字段，OT 可能是 `M/A/TB`
+
+所以 skill 现在要求按模块和区域拆分，例如：
+
+```text
+### 集成概览 - 新建工程组弹窗
+### 集成概览 - 工程组/工程树状侧边栏
+### 集成流程概览 - 筛选栏/搜索栏
+### 集成流程概览 - 集成流程表格列
+### 集成流程概览 - 表格行操作
+```
+
+同名字段只有在业务意义、位置、行为、DT、OT 都一致时才可以合并，否则必须拆成不同表格下的不同记录。
+
+**字段收录边界**
+
+这个 skill 还特别定义了“不写什么”。
+
+默认不写：
+
+- 权限角色
+- 国际化
+- 后台 log 语言要求
+- 拖拽、排序、鼠标手势等纯交互能力
+- 公共组件内部未说明的配置字段
+- PRD 未提到的数据库实现字段
+
+这些规则很关键，因为数据字典不是需求说明全集，也不是交互说明全集。它只记录字段、控件、展示项、按钮、可点击文本、状态值、枚举值等与数据和界面对象相关的内容。
+
+**DT/OT 推断逻辑**
+
+DT 主要根据字段内容判断：
+
+- 名称、ID、编码、描述、枚举标签：`C`
+- 数量、比例、时长、行数：`N`
+- 日期：`D`
+- 日期时间：`DT`
+- 时间：`T`
 - 空状态：`E`
 - 按钮：`B`
 
-这些缩写的正式定义来自 [references/data-dictionary-standard.md](/Users/kierantou/.codex/skills/auto-fill-data-dictionary/references/data-dictionary-standard.md:5)。
+OT 主要根据用户能否操作、如何操作判断：
 
-**OT 判断逻辑**
-OT 是“操作类型”，判断规则在 [SKILL.md](/Users/kierantou/.codex/skills/auto-fill-data-dictionary/SKILL.md:50)。
-
-主要逻辑是：
-
-- 必填：`M`
-- 选填：`O`
-- 保存后可修改：`A`
-- 保存后不可修改：`FA`
-- 只展示：`D`
+- 必填表单字段：`M`
+- 选填表单字段：`O`
+- 可修改：`A`
+- 不可修改：`FA`
+- 展示字段：`D`
 - 可点击文本：`TC`
+- 长显按钮：`BL`
+- 置灰按钮：`BG`
+- 消失按钮：`BD`
 - 文本输入框：`TB`
-- 隐藏后台字段：`H`
 - 下拉单选：`DRB`
 - 下拉多选：`DMB`
 - 单选框：`R`
 - 开关：`S`
-- 按钮根据状态用 `BL`、`BG`、`BD`
 
-正式缩写表在 [references/data-dictionary-standard.md](/Users/kierantou/.codex/skills/auto-fill-data-dictionary/references/data-dictionary-standard.md:17)。
+当一个字段有多个操作属性时，用 `/` 连接，例如：
 
-**比较关键的设计**
-这个 skill 最重要的逻辑不是“自动猜”，而是“分阶段确认”。
+```text
+M/A/TB
+O/DRB
+D/TC
+```
 
-它刻意要求：
+**使用方式**
 
-- 先确认 Markdown，再提字段。
-- 先确认字段范围，再生成表格。
-- PRD 没写清楚的内容写 `待确认`，不要自己编。
-- 不额外添加数据库字段，除非 PRD 明确提到，或用户要求推断隐藏字段。
-- 同一个业务概念如果既是筛选项又是表格列，需要按场景拆成不同字段，比如筛选项可能是 `DRB`，表格列是 `D`。
+典型使用方式是：
 
-所以它的定位是：让 Codex 按你的数据字典规范稳定产出，而不是一次性自由发挥。
+```text
+[$auto-fill-data-dictionary](/Users/kierantou/.codex/skills/auto-fill-data-dictionary/SKILL.md)
+下面是 PRD，生成数据字典
+```
+
+然后 Codex 会按流程执行：
+
+```text
+PRD 原文
+→ Markdown 整理
+→ 用户确认
+→ 字段范围提取
+→ 用户确认
+→ 按模块拆分
+→ 生成 DT/OT 数据字典
+```
+
+**这个 skill 的价值**
+
+这个 skill 的价值主要有三点：
+
+1. 稳定性  
+   它把数据字典生成变成固定流程，减少每次输出风格不一致的问题。
+
+2. 可审阅性  
+   通过 Markdown 确认和字段范围确认，把错误提前暴露，而不是等最终大表生成后再返工。
+
+3. 可维护性  
+   DT/OT 标准放在 reference 文件里，流程放在 SKILL.md 里，展示信息放在 openai.yaml 里，职责清晰，后续扩展方便。

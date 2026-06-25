@@ -1,0 +1,95 @@
+
+## 项目介绍
+
+本项目全部代码均VibeCoding而来，详见文章：[适合中国宝宝的低成本VibeCoding指南](/blog/vibe-coding-guide)。
+
+项目源码位于Github：https://github.com/KieranTou-AI/nl2dsl。
+
+### 技术栈选型
+
+| 层 | 选型 | 描述 |
+|---|---|---|
+| 环境管理 | **Conda** | 通过conda管理python环境，避免依赖冲突 |
+| 版本控制 | **Git + GitHub** | 通过git管理项目，push到github留档&共享 |
+| 工作流编排 | **LangGraph**（Supervisor 多 Agent 模式） |
+| LLM | **DeepSeek API** | 调用DeepSeek API（兼容OpenAI接口） |
+| 结构化输出 | **Instructor** + Pydantic v2 |
+| 关系数据库 | **Supabase**（PostgreSQL） | 模拟数仓，存储评测集、会话记录、意图标签等 |
+| Schema 检索 | **Prompt 内嵌表结构**（详见 [schema-retrieval.md](schema-retrieval.md)） |
+| 会话存储 | Supabase PostgreSQL（JSONB） |
+| 代码执行 | **受限 `exec()`**（详见 [code-execution.md](code-execution.md)） |
+| 网络框架 | **FastAPI + Uvicorn**（前后端分离，SSE 流式输出） |
+| 前端原型 | **Streamlit** |
+| 可观测性 | **LangFuse**（Tracing + Prompt 版本管理 + 实验对比） | 
+| API 测试 | **Postman**（开发期独立调 API 验证 Agent 效果） |
+| 评测框架 | 分节点 PRF1 + 4 桶评测集，详见 [evaluation.md](evaluation.md) |
+
+## 项目骨架
+
+### 1.加载git
+
+比较简单，不多赘述。无版本管理需求也可不做。
+
+此处主要是为了push到github留档。
+
+### 2.创建环境
+
+创建`environment.yml`文件，定义环境所需python版本和依赖包：
+
+```yaml
+name: nl2dsl
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - python=3.12
+  - pip
+  - pip:
+      - langgraph>=0.2
+      - langgraph-supervisor
+      - langfuse
+      - fastapi
+      - uvicorn[standard]
+      - supabase
+      - instructor
+      - openai
+      - pydantic>=2
+      - pandas
+      - streamlit
+      - pytest
+      - pytest-asyncio
+      - python-dotenv
+```
+
+创建环境：
+
+```bash
+conda env create -f environment.yml
+```
+
+创建完成后，环境名叫 nl2dsl，路径在 /Users/kierantou/miniforge3/envs/nl2dsl。
+
+### 3.配置.env文件
+
+> 填写相关API（DeepSeek API、Supabase API、LangFuse API）
+
+1. DeepSeek API Key: 进入[DeepSeek开放平台](https://platform.deepseek.com/usage)获取
+2. Supabase API Key: 进入[Supabase Dashboard](https://app.supabase.com/)获取
+3. LangFuse API Key: 进入[LangFuse Dashboard](https://cloud.langfuse.com)获取
+
+> 注意区分公钥和私钥
+
+> LangFuse本地部署需要docker-compose，先不搞这么复杂，使用云端部署，免费额度也够用了。
+
+
+
+
+
+
+
+
+
+
+第5步   接 Supabase             → 建项目、跑 seed.py
+第6步   启动 FastAPI + 测试 API
+第7步   启动 Streamlit 前端
